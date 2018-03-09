@@ -1,0 +1,37 @@
+version: "2"
+
+services:
+  mariadb:
+    volumes:
+      - ../mysql:/var/lib/mysql
+
+  php:
+    environment:
+      PHP_XDEBUG: 1
+    volumes:
+      - ../../core:/var/www/html
+      - ../../sites:/var/www/html/sites
+
+  nginx:
+    environment:
+      NGINX_SERVER_ROOT: /var/www/html
+    volumes:
+      - ../../core:/var/www/html
+      - ../../sites:/var/www/html/sites
+
+  traefik:
+    command: -c /dev/null --web --docker --logLevel=INFO --defaultEntryPoints='https,http' --entryPoints='Name:https Address::443 TLS:/certs/cert.pem,/certs/key.pem' --entryPoints='Name:http Address::80'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080' # Dashboard
+    volumes:
+      - ../certs:/certs
+
+  omgwtfssl:
+    image: paulczar/omgwtfssl
+    container_name: "${PROJECT_NAME}_ssl"
+    environment:
+      SSL_SUBJECT: ${PROJECT_BASE_URL}
+    volumes:
+      - ../certs:/certs
