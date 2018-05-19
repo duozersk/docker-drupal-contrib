@@ -6,9 +6,9 @@ include .env
 default: up
 
 pull:
-	docker-compose pull --parallel
+	docker-compose pull
 
-up:
+up: | pull
 	@echo "Starting up containers for for $(PROJECT_NAME)..."
 	docker-compose up -d --remove-orphans
 

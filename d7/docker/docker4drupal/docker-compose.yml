@@ -24,11 +24,15 @@ services:
       DB_PASSWORD: $DB_PASSWORD
       DB_NAME: $DB_NAME
       DB_DRIVER: $DB_DRIVER
+## Read instructions at https://wodby.com/stacks/drupal/docs/local/xdebug/
 #      PHP_XDEBUG: 1
 #      PHP_XDEBUG_DEFAULT_ENABLE: 1
 #      PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
-#      PHP_XDEBUG_REMOTE_HOST: "10.254.254.254"
-#      PHP_BLACKFIRE: 1
+#      PHP_IDE_CONFIG: serverName=my-ide
+#      PHP_XDEBUG_REMOTE_HOST: host.docker.internal # Docker 18.03+ & Linux/Mac/Win
+#      PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux, Docker < 18.03
+#      PHP_XDEBUG_REMOTE_HOST: 10.254.254.254 # macOS, Docker < 18.03
+#      PHP_XDEBUG_REMOTE_HOST: 10.0.75.1 # Windows, Docker < 18.03
     volumes:
       - ./:/var/www/html
 ## For macOS users (https://wodby.com/stacks/drupal/docs/local/docker-for-mac/)
@@ -182,7 +186,7 @@ services:
 #      WEAVER_CONVERSION_FALLBACK: "false"
 
 #  node:
-#    image: node:alpine
+#    image: wodby/node:$NODE_TAG
 #    container_name: "${PROJECT_NAME}_node"
 #    working_dir: /app
 #    labels:
@@ -213,6 +217,24 @@ services:
 #      - 'traefik.frontend.rule=Host:webgrind.${PROJECT_BASE_URL}'
 #    volumes:
 #      - files:/mnt/files
+
+#  elasticsearch:
+#    image: wodby/elasticsearch:$ELASTICSEARCH_TAG
+#    environment:
+#      ES_JAVA_OPTS: "-Xms500m -Xmx500m"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+
+#  kibana:
+#    image: wodby/kibana:$KIBANA_TAG
+#    depends_on:
+#      - elasticsearch
+#    labels:
+#      - 'traefik.backend=kibana'
+#      - 'traefik.port=5601'
+#      - 'traefik.frontend.rule=Host:kibana.php.docker.localhost'
 
   portainer:
     image: portainer/portainer
